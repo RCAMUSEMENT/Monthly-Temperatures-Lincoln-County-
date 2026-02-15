@@ -1,0 +1,131 @@
+/*
+ * PROGRAM: Lincoln County Temperature System
+ * AUTHOR: Ryley Carlson
+ */
+
+START
+
+    // ---------------------------------------------------------
+    // MODULE: main
+    // ---------------------------------------------------------
+    FUNCTION main():
+        // Data Initialization
+        DECLARE months AS STRING ARRAY = ["January", "February", "March", "April", "May", "June",
+                                          "July", "August", "September", "October", "November", "December"]
+        DECLARE temps AS DOUBLE ARRAY = [24.0, 27.5, 37.2, 45.8, 54.1, 62.5, 71.0, 69.4, 59.2, 46.7, 34.3, 24.5]
+        DECLARE continueProgram AS BOOLEAN = true
+        DECLARE userInput AS STRING
+
+        PRINT "--- Ryley Carlson's Year-at-a-Glance: Lincoln County Temperature System ---"
+
+        WHILE continueProgram IS true:
+            PRINT "Please enter a month or type 'year' for a full report: "
+            SET userInput = CALL readInput()
+
+            IF userInput EQUALS "year" (case-insensitive):
+                CALL printYearlyReport(months, temps)
+            ELSE:
+                CALL handleMonthlyInput(months, temps, userInput)
+            END IF
+
+            // Logic for program continuation
+            SET continueProgram = CALL askToContinue()
+        END WHILE
+
+        PRINT "Exiting program. Thank you for using Ryley Carlson's System! Goodbye!"
+    END FUNCTION
+
+    // ---------------------------------------------------------
+    // MODULE: handleMonthlyInput
+    // ---------------------------------------------------------
+    FUNCTION handleMonthlyInput(months, temps, target):
+        DECLARE bestMatchIndex = -1
+        DECLARE minDistance = INFINITY
+
+        FOR i FROM 0 TO months.length - 1:
+            // Direct Search (Case Insensitive)
+            IF months[i] EQUALS target (case-insensitive):
+                PRINT "--- " + months[i] + ": " + temps[i] + "°F ---"
+                RETURN
+            END IF
+
+            // Typo Search Logic (Levenshtein)
+            DECLARE distance = CALL calculateDistance(target.toLowerCase(), months[i].toLowerCase())
+            IF distance < minDistance:
+                SET minDistance = distance
+                SET bestMatchIndex = i
+            END IF
+        END FOR
+
+        PRINT "Error: '" + target + "' not found."
+        IF bestMatchIndex != -1 AND minDistance <= 2:
+            PRINT "Did you mean '" + months[bestMatchIndex] + "'?"
+        END IF
+    END FUNCTION
+
+    // ---------------------------------------------------------
+    // MODULE: calculateDistance (Levenshtein Matrix)
+    // ---------------------------------------------------------
+    FUNCTION calculateDistance(s1, s2):
+        DECLARE m = s1.length
+        DECLARE n = s2.length
+        DECLARE dp AS 2D ARRAY [m+1][n+1]
+
+        FOR i FROM 0 TO m: SET dp[i][0] = i
+        FOR j FROM 0 TO n: SET dp[0][j] = j
+
+        FOR i FROM 1 TO m:
+            FOR j FROM 1 TO n:
+                IF s1[i-1] == s2[j-1]:
+                    SET dp[i][j] = dp[i-1][j-1]
+                ELSE:
+                    SET dp[i][j] = MIN(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+                END IF
+            END FOR
+        END FOR
+
+        RETURN dp[m][n]
+    END FUNCTION
+
+    // ---------------------------------------------------------
+    // MODULE: printYearlyReport
+    // ---------------------------------------------------------
+    FUNCTION printYearlyReport(months, temps):
+        DECLARE sum = 0
+        DECLARE highest = temps[0]
+        DECLARE lowest = temps[0]
+
+        PRINT "--- Annual Temperature Report ---"
+        
+        FOR i FROM 0 TO months.length - 1:
+            PRINT months[i] + " : " + temps[i] + "°F"
+            SET sum = sum + temps[i]
+            
+            IF temps[i] > highest THEN SET highest = temps[i]
+            IF temps[i] < lowest THEN SET lowest = temps[i]
+        END FOR
+
+        PRINT "Average: " + (sum / 12) + "°F"
+        PRINT "Highest: " + highest + "°F"
+        PRINT "Lowest : " + lowest + "°F"
+    END FUNCTION
+
+    // ---------------------------------------------------------
+    // MODULE: askToContinue
+    // ---------------------------------------------------------
+    FUNCTION askToContinue():
+        WHILE true:
+            PRINT "Would you like to search again? (yes/no): "
+            DECLARE choice = CALL readInput().toLowerCase()
+
+            IF choice == "yes" OR choice == "y" THEN RETURN true
+            IF choice == "no" OR choice == "n" THEN RETURN false
+            
+            PRINT "Invalid input. Please enter yes or no."
+        END WHILE
+    END FUNCTION
+
+    // Start the program
+    CALL main()
+
+END
