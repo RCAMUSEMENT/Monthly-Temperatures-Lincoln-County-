@@ -1,6 +1,8 @@
 # 🌡️ Lincoln County Temperature System
 **Author:** Ryley Carlson
+
 **Project:** CSC320 Module 5 Critical Thinking - Option 2
+
 **Implementation:** Java (Object-Oriented Logic)
 
 
@@ -85,5 +87,6 @@ Lowest : 24.00°F
 
 
 *Created as part of a Java Programming project for CSC320 Programming 1*
+
 
 
