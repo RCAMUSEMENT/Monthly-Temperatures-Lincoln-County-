@@ -8,7 +8,7 @@
 
 
 ## 📖 Project Overview
-The **Lincoln County Temperature System** is a robust command-line utility designed for the storage, retrieval, and analysis of monthly temperature data. By leveraging **parallel arrays**The system maintains a direct relationship between 12 months of historical climate data and their respective names, providing users with an interactive interface to query specific statistics or generate a comprehensive annual report.
+The **Lincoln County Temperature System** is a robust command-line utility designed for the storage, retrieval, and analysis of monthly temperature data. By leveraging **parallel arrays** the system maintains a direct relationship between 12 months of historical climate data and their respective names, providing users with an interactive interface to query specific statistics or generate a comprehensive annual report.
 
 
 ### Key Features
@@ -85,4 +85,5 @@ Lowest : 24.00°F
 
 
 *Created as part of a Java Programming project for CSC320 Programming 1*
+
 
